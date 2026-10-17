@@ -1,3 +1,6 @@
+// (core\application.h) This file is part of BLAF Core module.
+// Licensed under the MIT License. See LICENSE file in the project root for full.
+
 #ifndef BLAFCORE_CORE_APPLICATION_H
 #define BLAFCORE_CORE_APPLICATION_H
 
@@ -6,7 +9,7 @@
 namespace BLAF
 {
 	/**
-	* @brief Application class.
+	*	@brief Application class.
 	* 
 	*	This class is responsible for running the application.
 	*	It contains application loops and modules responsible
@@ -30,6 +33,14 @@ namespace BLAF
 		*/
 		bool IsRunning() { return bRunning; }
 		
+
+		/** @brief Post construct method. Calls at end of class construction. */
+		virtual void PostConstruct();
+
+		/** @brief Update method. Calls on every application update (Overridable) */
+		virtual void Update();
+
+
 		/**
 		*	@name Modules
 		*	@{

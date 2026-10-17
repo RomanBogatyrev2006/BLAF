@@ -1,3 +1,6 @@
+// (logger\logLevels.h) This file is part of BLAF Debug module.
+// Licensed under the MIT License. See LICENSE file in the project root for full.
+
 #ifndef BLAFDEBUG_LOGGER_LOGLEVELS_H
 #define BLAFDEBUG_LOGGER_LOGLEVELS_H
 

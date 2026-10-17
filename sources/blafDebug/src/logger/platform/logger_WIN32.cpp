@@ -1,3 +1,6 @@
+// (logger\logger_WIN32.cpp) This file is part of BLAF Debug module.
+// Licensed under the MIT License. See LICENSE file in the project root for full.
+
 #ifdef BLAF_TARGET_WINDOWS
 #include <logger/logger.h>
 #include <fstream>
@@ -47,12 +50,12 @@ namespace BLAF
 
 		std::ostringstream builder;
 
-		// String = Set message color -> Time (HH:MM:SS) -> Message -> Reset message color
-		builder << SetColor(level) <<
+		// String = Time (HH:MM:SS) -> Message
+		builder << 
 			std::setw(2) << std::setfill('0') << time_info.tm_hour << ":" <<
 			std::setw(2) << std::setfill('0') << time_info.tm_min << ":" <<
-			std::setw(2) << std::setfill('0') << time_info.tm_sec << ":" <<
-			message << "\033[0m" << std::endl;
+			std::setw(2) << std::setfill('0') << time_info.tm_sec << "| " <<
+			message << std::endl;
 
 		WriteToConsole(level, builder.str());
 		WriteToFile(level, builder.str());
@@ -68,12 +71,13 @@ namespace BLAF
 
 			std::ostringstream builder;
 
-			// String = Set message color -> Time (HH:MM:SS) -> Message -> Reset message color
-			builder << SetColor(level) <<
+			// String = Time (HH:MM:SS) -> Message
+			builder <<
 				std::setw(2) << std::setfill('0') << time_info.tm_hour << ":" <<
 				std::setw(2) << std::setfill('0') << time_info.tm_min << ":" <<
-				std::setw(2) << std::setfill('0') << time_info.tm_sec << ":" <<
-				message << "\033[0m" << std::endl;
+				std::setw(2) << std::setfill('0') << time_info.tm_sec << "| " <<
+				message << std::endl;
+
 			WriteToFile(level, message.str());
 		}
 #endif
@@ -89,9 +93,14 @@ namespace BLAF
 			return;
 		}
 		
-		int wide_len = MultiByteToWideChar(CP_UTF8, 0, message.c_str(), -1, nullptr, 0);
+		// String = Set message color -> Log message -> Reset message color
+		std::stringstream messageWithColor;
+		messageWithColor << SetColor(level) << message << "\033[0m";
+		std::string fullMessage = messageWithColor.str();
+
+		int wide_len = MultiByteToWideChar(CP_UTF8, 0, fullMessage.c_str(), -1, nullptr, 0);
 		std::wstring wide(wide_len, L'\0');
-		MultiByteToWideChar(CP_UTF8, 0, message.c_str(), -1, &wide[0], wide_len);
+		MultiByteToWideChar(CP_UTF8, 0, fullMessage.c_str(), -1, &wide[0], wide_len);
 		DWORD written = 0;
 		WriteConsoleW(hConsole, wide.c_str(), (DWORD)wcslen(wide.c_str()), &written, nullptr);
 	}
@@ -100,7 +109,7 @@ namespace BLAF
 	{
 		if (static_cast<std::ofstream*>(mFile)->is_open())
 		{
-			*static_cast<std::ofstream*>(mFile) << message << std::endl;
+			*static_cast<std::ofstream*>(mFile) << message;
 		}
 	}
 

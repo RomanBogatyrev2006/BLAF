@@ -1,3 +1,6 @@
+// (logger\logger.h) This file is part of BLAF Debug module.
+// Licensed under the MIT License. See LICENSE file in the project root for full.
+
 #ifndef BLAFDEBUG_LOGGER_LOGGER_H
 #define BLAFDEBUG_LOGGER_LOGGER_H
 
@@ -6,7 +9,7 @@
 namespace BLAF
 {
 	/**
-	* @brief Logger class.
+	*	@brief Logger class.
 	*
 	*	This class is responsible for logging.
 	*	Supports logging to the console and to a separate log file.

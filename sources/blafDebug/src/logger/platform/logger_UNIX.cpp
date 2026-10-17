@@ -1,3 +1,6 @@
+// (logger\logger_UNIX.cpp) This file is part of BLAF Debug module.
+// Licensed under the MIT License. See LICENSE file in the project root for full.
+
 #ifdef BLAF_TARGET_UNIX
 #include <logger/logger.h>
 #include <fstream>
@@ -40,7 +43,7 @@ namespace BLAF
 		builder << SetColor(level) <<
 			std::setw(2) << std::setfill('0') << time_info.tm_hour << ":" <<
 			std::setw(2) << std::setfill('0') << time_info.tm_min << ":" <<
-			std::setw(2) << std::setfill('0') << time_info.tm_sec << ":" <<
+			std::setw(2) << std::setfill('0') << time_info.tm_sec << "| " <<
 			message << "\033[0m" << std::endl;
 
 		WriteToConsole(level, builder.str());

@@ -1,6 +1,7 @@
 set(BLAFDEBUG_LOGGER_HEADERS
 	src/logger/logger.h
 	src/logger/logLevels.h
+	src/assert/assert.h
 )
 
 set(BLAFDEBUG_LOGGER_SOURCES
