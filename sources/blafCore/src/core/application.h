@@ -5,6 +5,7 @@
 #define BLAFCORE_CORE_APPLICATION_H
 
 #include <logger/logger.h>
+#include <window/window.h>
 
 namespace BLAF
 {
@@ -40,6 +41,9 @@ namespace BLAF
 		/** @brief Update method. Calls on every application update (Overridable) */
 		virtual void Update();
 
+		/** @brief Render method. Calls on every application update (Overridable) */
+		virtual void Render();
+
 
 		/**
 		*	@name Modules
@@ -48,6 +52,9 @@ namespace BLAF
 
 		/** @brief Logger module. */
 		inline static Logger* logger = 0;
+
+		/** @brief Window */
+		inline static Window* windowManager = 0;
 
 		/** @} */
 

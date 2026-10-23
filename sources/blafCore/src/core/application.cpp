@@ -11,13 +11,15 @@ namespace BLAF
 
 		// Initialize logger
 		logger = new Logger();
+		windowManager = new Window("BLAF", 1280, 720, 640, 360);
 	}
 
 	Application::~Application()
 	{
 		logger->Log(LogLevel::Log, "Deinitializing...");
 
-		// Deinitialize logger
+		// Deinitialize modules
+		delete windowManager;
 		delete logger;
 	}
 
@@ -29,6 +31,10 @@ namespace BLAF
 	{
 	}
 
+	void Application::Render()
+	{
+	}
+
 	void Application::Run()
 	{
 		bRunning = true;
@@ -36,9 +42,11 @@ namespace BLAF
 		PostConstruct();
 		while (bRunning)
 		{
+			bRunning = windowManager->Update();
 			Update();
+			
 		}
 	}
-
 }
+
 
