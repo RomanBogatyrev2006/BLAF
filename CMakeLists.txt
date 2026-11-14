@@ -22,6 +22,10 @@ add_subdirectory(sources/blafRender)
 
 add_library(BLAF INTERFACE)
 
+if (MSVC)
+	target_compile_options(BLAF INTERFACE /utf-8)
+endif()
+
 target_link_libraries(BLAF INTERFACE blafCore)
 target_link_libraries(BLAF INTERFACE blafDebug)
 target_link_libraries(BLAF INTERFACE blafRender)

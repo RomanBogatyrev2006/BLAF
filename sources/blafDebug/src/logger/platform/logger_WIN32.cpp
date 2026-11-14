@@ -104,9 +104,21 @@ namespace BLAF
 		messageWithColor << SetColor(level) << message << "\033[0m";
 		std::string fullMessage = messageWithColor.str();
 
-		int wide_len = MultiByteToWideChar(CP_UTF8, 0, fullMessage.c_str(), -1, nullptr, 0);
+		std::string test = u8"Да ёпта иди сюды!dfh";
+
+		int wide_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, fullMessage.data(), static_cast<int>(fullMessage.size()), nullptr, 0);
+		
+		if (wide_len <= 0)
+		{
+			DWORD error = GetLastError();
+
+			std::cerr << "UTF-8 CONVERT FAIL. ERR: " << error << std::endl;
+			std::cerr << "UTF-8 CONVERT FAIL. ERR: " << fullMessage.size() << std::endl;
+			return;
+		}
+		
 		std::wstring wide(wide_len, L'\0');
-		MultiByteToWideChar(CP_UTF8, 0, fullMessage.c_str(), -1, &wide[0], wide_len);
+		MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, fullMessage.data(), static_cast<int>(fullMessage.size()), &wide[0], wide_len);
 		DWORD written = 0;
 		WriteConsoleW(hConsole, wide.c_str(), (DWORD)wcslen(wide.c_str()), &written, nullptr);
 	}

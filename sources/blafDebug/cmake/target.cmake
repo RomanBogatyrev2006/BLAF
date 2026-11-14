@@ -13,7 +13,7 @@ if (WIN32)
 	target_compile_definitions(blafDebug PRIVATE UNICODE _UNICODE)
 endif()
 if (MSVC)
-	target_compile_definitions(blafDebug PRIVATE /utf-8)
+	target_compile_options(blafDebug PRIVATE /utf-8)
 endif()
 
 target_link_libraries(blafDebug PUBLIC blafCore)
