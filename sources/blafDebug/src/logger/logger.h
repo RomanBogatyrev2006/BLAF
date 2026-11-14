@@ -8,8 +8,7 @@
 
 namespace BLAF
 {
-	/**
-	*	@brief Logger class.
+	/**	@brief Logger class.
 	*
 	*	This class is responsible for logging.
 	*	Supports logging to the console and to a separate log file.
@@ -52,7 +51,6 @@ namespace BLAF
 
 	private:
 		Logger(const Logger&) = delete;
-
 		Logger& operator=(const Logger&) = delete;
 
 		/** @brief Print message to console.
@@ -92,6 +90,29 @@ namespace BLAF
 		void* mFile = nullptr;
 
 	};
+
+	/**
+	*	@name Logger shortcuts
+	*	@{
+	*/
+
+	/** Log message with level: Log (Logger shortcut). */
+	void Log_LOG(const std::string& message);
+
+	/** Log message with level: Info (Logger shortcut). */
+	void Log_INFO(const std::string& message);
+
+	/** Log message with level: Warning (Logger shortcut). */
+	void Log_WARNING(const std::string& message);
+
+	/** Log message with level: Error (Logger shortcut). */
+	void Log_ERROR(const std::string& message);
+
+	/** Log message with level: Fatal (Logger shortcut). */
+	void Log_FATAL(const std::string& message);
+
+	/** @} */
+
 }
 
 #endif

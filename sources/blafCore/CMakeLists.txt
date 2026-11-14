@@ -4,5 +4,6 @@ project(blafCore LANGUAGES C CXX)
 
 include(cmake/filesCore.cmake)
 include(cmake/filesWindow.cmake)
+include(cmake/filesTime.cmake)
 include(cmake/allFiles.cmake)
 include(cmake/target.cmake)

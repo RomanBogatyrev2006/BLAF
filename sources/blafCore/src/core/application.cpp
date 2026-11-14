@@ -5,21 +5,44 @@
 
 namespace BLAF
 {
-	Application::Application()
+	Application::Application(LaunchArguments launchArgs)
 	{
 		bRunning = false;
 
 		// Initialize logger
-		logger = new Logger();
-		windowManager = new Window("BLAF", 1280, 720, 640, 360);
+		#ifdef _DEBUG
+			if (!launchArgs.logFile)
+			{
+				logger = new Logger();
+			}
+			else
+			{
+				logger = new Logger(launchArgs.logFile_Value);
+			}
+		#else
+			if (!launchArgs.logFile)
+			{
+				logger = new Logger("");
+			}
+			else
+			{
+				logger = new Logger(launchArgs.logFile_Value);
+			}
+		#endif
+		logger->Log(LogLevel::Log, "Barely Lightweight Application Framework (BLAF)\n           -> VERSION: 0.0.0 DEBUG\n           -> BUILD DATE: XX.XX.XXXX (DD.MM.YYYY)\n           -> BUILD TIME: XX:XX (HH:MM)");
+		
+		// Initialize window manager
+		mWindowManager = new Window("BLAF", 1280, 720, 640, 360);
+		//renderer = new Renderer();
 	}
 
 	Application::~Application()
 	{
 		logger->Log(LogLevel::Log, "Deinitializing...");
-
+		
 		// Deinitialize modules
-		delete windowManager;
+		//delete renderer;
+		delete mWindowManager;
 		delete logger;
 	}
 
@@ -38,14 +61,17 @@ namespace BLAF
 	void Application::Run()
 	{
 		bRunning = true;
-		logger->Log(LogLevel::Log, "Barely Lightweight Application Framework (BLAF)\n           -> VERSION: 0.0.0 DEBUG\n           -> BUILD DATE: 17.10.2026 (DD.MM.YYYY)\n           -> BUILD TIME: 1:21 (HH:MM)");
 		PostConstruct();
+		mTimer->Initialize();
+		//renderer->Initialize();
 		while (bRunning)
 		{
-			bRunning = windowManager->Update();
+			mTimer->Tick();
+			bRunning = mWindowManager->Update();
 			Update();
-			
+
 		}
+		mTimer->Deinitialize();
 	}
 }
 

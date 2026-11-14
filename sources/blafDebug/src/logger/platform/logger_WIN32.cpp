@@ -5,6 +5,7 @@
 #include <logger/logger.h>
 #include <fstream>
 #include <sstream>
+#include <core/application.h>
 
 #include <time.h>
 #include <Windows.h>
@@ -78,7 +79,12 @@ namespace BLAF
 				std::setw(2) << std::setfill('0') << time_info.tm_sec << "| " <<
 				message << std::endl;
 
-			WriteToFile(level, message.str());
+			#ifdef _DEBUG
+				WriteToFile(level, message.str());
+			#else
+				WriteToFile(level, message.c_str());
+			#endif
+			
 		}
 #endif
 	}
@@ -125,5 +131,34 @@ namespace BLAF
 			default: return "\033[0m";
 		}
 	}
+
+
+	// --Shortcuts--
+
+	void Log_LOG(const std::string& message)
+	{
+		Application::logger->Log(LogLevel::Log, message);
+	}
+	
+	void Log_INFO(const std::string& message)
+	{
+		Application::logger->Log(LogLevel::Info, message);
+	}
+	
+	void Log_WARNING(const std::string& message)
+	{
+		Application::logger->Log(LogLevel::Warning, message);
+	}
+	
+	void Log_ERROR(const std::string& message)
+	{
+		Application::logger->Log(LogLevel::Error, message);
+	}
+	
+	void Log_FATAL(const std::string& message)
+	{
+		Application::logger->Log(LogLevel::Fatal, message);
+	}
+
 }
 #endif

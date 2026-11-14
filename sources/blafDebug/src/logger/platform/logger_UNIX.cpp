@@ -1,7 +1,7 @@
 // (logger\logger_UNIX.cpp) This file is part of BLAF Debug module.
 // Licensed under the MIT License. See LICENSE file in the project root for full.
 
-#ifdef BLAF_TARGET_UNIX
+#ifdef BLAF_TARGET_UNIX			// IMPLEMENTATION OUTDATED! NEED TO BE UPDATED!
 #include <logger/logger.h>
 #include <fstream>
 #include <sstream>

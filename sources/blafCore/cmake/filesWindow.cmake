@@ -1,6 +1,7 @@
 set(BLAFCORE_WINDOW_HEADERS
 	src/window/window.h
 	src/window/windowProps.h
+	src/window/cursors.h
 )
 
 set(BLAFCORE_WINDOW_SOURCES
