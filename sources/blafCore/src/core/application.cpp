@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full.
 
 #include "application.h"
+#include "core.h"
 
 namespace BLAF
 {
@@ -29,7 +30,7 @@ namespace BLAF
 				logger = new Logger(launchArgs.logFile_Value);
 			}
 		#endif
-		logger->Log(LogLevel::Log, "Barely Lightweight Application Framework (BLAF)\n           -> VERSION: 0.0.0 DEBUG\n           -> BUILD DATE: XX.XX.XXXX (DD.MM.YYYY)\n           -> BUILD TIME: XX:XX (HH:MM)");
+		logger->Log(LogLevel::Log, BLAF_InitializeString);
 		
 		// Initialize window manager
 		mWindowManager = new Window("BLAF", 1280, 720, 640, 360);

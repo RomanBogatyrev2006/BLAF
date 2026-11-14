@@ -104,16 +104,14 @@ namespace BLAF
 		messageWithColor << SetColor(level) << message << "\033[0m";
 		std::string fullMessage = messageWithColor.str();
 
-		std::string test = u8"Да ёпта иди сюды!dfh";
-
 		int wide_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, fullMessage.data(), static_cast<int>(fullMessage.size()), nullptr, 0);
 		
 		if (wide_len <= 0)
 		{
 			DWORD error = GetLastError();
 
-			std::cerr << "UTF-8 CONVERT FAIL. ERR: " << error << std::endl;
-			std::cerr << "UTF-8 CONVERT FAIL. ERR: " << fullMessage.size() << std::endl;
+			std::cerr << "UTF-8 CONVERTATION FAILED. ERR:  " << error << std::endl;
+			std::cerr << "UTF-8 CONVERTATION FAILED. SIZE: " << fullMessage.size() << std::endl;
 			return;
 		}
 		

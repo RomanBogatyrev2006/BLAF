@@ -25,7 +25,7 @@ namespace BLAF
 	
 	/** @brief Get launch arguments from given data. */
 	LaunchArguments GetLaunchArguments(int argc, char* argv[]);
-
+	
 }
 
 #endif
