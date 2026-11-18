@@ -32,6 +32,7 @@ namespace BLAF
 		virtual void Render() = 0;
 
 	};
+
 }
 
 #endif

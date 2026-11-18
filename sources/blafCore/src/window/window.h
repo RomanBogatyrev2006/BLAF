@@ -6,6 +6,7 @@
 
 #include "windowProps.h"
 #include "cursors.h"
+#include <input/input.h>
 
 namespace BLAF
 {
@@ -23,7 +24,8 @@ namespace BLAF
 			uint32_t width = 640,
 			uint32_t height = 480,
 			uint32_t x = -1,
-			uint32_t y = -1
+			uint32_t y = -1,
+			Input* input = nullptr
 		);
 
 		/** @brief Destructor of class. */
@@ -167,6 +169,8 @@ namespace BLAF
 
 		//inline bool IsWindowOpened() { return true; }
 
+		void* GetNativeWindow() { return mNativeWindow; }
+
 		/** @} */
 
 	private:
@@ -182,6 +186,9 @@ namespace BLAF
 
 		/** @brief Native window handle. */
 		void* mNativeWindow = nullptr;
+
+		/** @brief Pointer to Input manager. */
+		Input* mInputPointer = nullptr;
 	};
 }
 

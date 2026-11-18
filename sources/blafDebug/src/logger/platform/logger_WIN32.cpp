@@ -79,11 +79,7 @@ namespace BLAF
 				std::setw(2) << std::setfill('0') << time_info.tm_sec << "| " <<
 				message << std::endl;
 
-			#ifdef _DEBUG
-				WriteToFile(level, message.str());
-			#else
-				WriteToFile(level, message.c_str());
-			#endif
+			WriteToFile(level, builder.str());
 			
 		}
 #endif

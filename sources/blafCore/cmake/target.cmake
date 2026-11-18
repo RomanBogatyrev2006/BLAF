@@ -18,4 +18,5 @@ endif()
 
 target_link_libraries(blafCore PUBLIC blafRender)
 target_link_libraries(blafCore PUBLIC blafDebug)
+target_link_libraries(blafCore PUBLIC blafInput)
 target_link_libraries(blafCore PUBLIC blafPch)

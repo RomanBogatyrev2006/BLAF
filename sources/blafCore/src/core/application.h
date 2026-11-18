@@ -9,6 +9,7 @@
 #include <window/window.h>
 #include <render/render.h>
 #include <time/timer.h>
+#include <input/input.h>
 
 namespace BLAF
 {
@@ -60,13 +61,9 @@ namespace BLAF
 
 		/** @} */
 
-	private:
-		/** @brief Indicates whether application is currently running. */
-		bool bRunning;
-
-
+	protected:
 		/**
-		*	@name Private modules
+		*	@name Protected modules
 		*	@{
 		*/
 
@@ -76,7 +73,15 @@ namespace BLAF
 		/** @brief Window. */
 		inline static Window* mWindowManager = 0;
 
+		/** @brief Input/ */
+		inline static Input* mInput = 0;
+
 		/** @} */
+
+	private:
+		/** @brief Indicates whether application is currently running. */
+		bool bRunning;
+		
 	};
 
 	

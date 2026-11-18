@@ -9,6 +9,9 @@
 
 namespace BLAF
 {
+	Input* globalInputPointer = nullptr;
+	long windowFlags;
+
 	// Convert std::string to wstring (LPCWSTR)
 	std::wstring UTF8toUTF16(const std::string& str)
 	{
@@ -93,23 +96,33 @@ namespace BLAF
 			break;
 		case WM_DESTROY:
 			Log_INFO("(WIN32) Window destroyed!");
-			//Application::logger->Log(LogLevel::Info, "Window destroyed!");
 			PostQuitMessage(0);
 			break;
 		case WM_CLOSE:
 			DestroyWindow(hWnd);
 			break;
-		case WM_MOVE:
-			//Application::logger->Log(LogLevel::Log, std::to_string(GetMonitorIndex(hWnd)));
-			//Application::logger->Log(LogLevel::Fatal, std::to_string(LOWORD(lp)) + "x" + std::to_string(HIWORD(lp)));
+		case WM_INPUT:{
+			if (globalInputPointer)
+			{
+				globalInputPointer->InputHandling(reinterpret_cast<void*>(lp));
+			}
 			break;
+		}
+		case WM_MOUSEMOVE: {
+			if (globalInputPointer)
+			{
+				globalInputPointer->MousePositionHandling(0.0f, 0.0f, LOWORD(lp), HIWORD(lp));
+			}
+			break;
+		}
+
 		default: return DefWindowProc(hWnd, msg, wp, lp);
 		}
-		//return DefWindowProcA(hWnd, msg, wp, lp);
+		return DefWindowProc(hWnd, msg, wp, lp);
 	}
 
 	// Get WIN32 native window
-	HWND GetNativeWindow(void* window)
+	HWND GetPrivateNativeWindow(void* window)
 	{
 		return static_cast<HWND>(window);
 	}
@@ -122,7 +135,8 @@ namespace BLAF
 		uint32_t width,
 		uint32_t height,
 		uint32_t x,
-		uint32_t y)
+		uint32_t y,
+		Input* input)
 	{
 		mProperties.title = title;
 		mProperties.x = x;
@@ -136,6 +150,10 @@ namespace BLAF
 
 		mCursor = DefaultCursors::Arrow;
 
+		// Input manager
+		mInputPointer = input;
+		globalInputPointer = mInputPointer;
+
 		// Creating window class
 		WNDCLASS winclass{};
 		//winclass.hIcon = LoadIcon(NULL, IDI_ASTERISK);
@@ -147,29 +165,34 @@ namespace BLAF
 		if (!RegisterClass(&winclass))
 		{
 			Log_ERROR("(WIN32) Failed to register window class!");
-			//Application::logger->Log(LogLevel::Error, "(WIN32) Failed to register window class!");
 			return;
 		}
 
 		// Window flags
-		long flags;
-		flags = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
-		if (mProperties.disableMaximize) { flags = flags | WS_MAXIMIZEBOX; }
-		if (mProperties.disableMinimize) { flags = flags | WS_MINIMIZEBOX; }
-		if (!mProperties.disableBorders) { flags = flags | WS_THICKFRAME; }
+		windowFlags = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+		if (mProperties.disableMaximize) { windowFlags = windowFlags | WS_MAXIMIZEBOX; }
+		if (mProperties.disableMinimize) { windowFlags = windowFlags | WS_MINIMIZEBOX; }
+		if (!mProperties.disableBorders) { windowFlags = windowFlags | WS_THICKFRAME; }
 
 		// Converting window title
 		std::wstring wideTitle = UTF8toUTF16(title);
+
+		// Adjusting window size to client area (No one likes non-client area).
+		RECT winRectAdjust = { 0, 0, mProperties.width, mProperties.height };
+		AdjustWindowRect(&winRectAdjust, windowFlags, false);
+
+		int32_t windowWidth = winRectAdjust.right - winRectAdjust.left;
+		int32_t windowHeight = winRectAdjust.bottom - winRectAdjust.top;
 
 		// Creating window
 		HWND hWnd = CreateWindowW(
 			winclass.lpszClassName,
 			wideTitle.c_str(),
-			flags,
+			windowFlags,
 			mProperties.x,
 			mProperties.y,
-			mProperties.width,
-			mProperties.height,
+			windowWidth,
+			windowHeight,
 			NULL,
 			NULL,
 			winclass.hInstance,
@@ -180,8 +203,6 @@ namespace BLAF
 		if (!hWnd)
 		{
 			Log_ERROR("(WIN32) Failed to create window!");
-
-			//Application::logger->Log(LogLevel::Error, "(WIN32) Failed to create window!");
 			return;
 		}
 
@@ -194,19 +215,18 @@ namespace BLAF
 		ShowWindow(hWnd, SW_SHOW);
 
 		Log_INFO("(WIN32) Window was created successfully!");
-		//Application::logger->Log(LogLevel::Info, "(WIN32) Window was created successfully!");
 	}
 
 	Window::~Window()
 	{
-		DestroyWindow(GetNativeWindow(mNativeWindow));
+		DestroyWindow(GetPrivateNativeWindow(mNativeWindow));
 	}
 
 	bool Window::Update()
 	{
 		MSG msg{};
 
-		uint8_t monitorID = GetMonitorIndex(GetNativeWindow(mNativeWindow));
+		uint8_t monitorID = GetMonitorIndex(GetPrivateNativeWindow(mNativeWindow));
 		mProperties.monitor = monitorID;
 
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -227,7 +247,7 @@ namespace BLAF
 	{
 		mProperties.x = x;
 		SetWindowPos(
-			GetNativeWindow(mNativeWindow),
+			GetPrivateNativeWindow(mNativeWindow),
 			nullptr,
 			x,
 			GetPositionY(),
@@ -240,7 +260,7 @@ namespace BLAF
 	{
 		mProperties.y = y;
 		SetWindowPos(
-			GetNativeWindow(mNativeWindow),
+			GetPrivateNativeWindow(mNativeWindow),
 			nullptr,
 			GetPositionY(),
 			y,
@@ -254,7 +274,7 @@ namespace BLAF
 		mProperties.x = x;
 		mProperties.y = y;
 		SetWindowPos(
-			GetNativeWindow(mNativeWindow),
+			GetPrivateNativeWindow(mNativeWindow),
 			nullptr,
 			x,
 			y,
@@ -266,11 +286,18 @@ namespace BLAF
 	void Window::SetWidth(uint32_t width)
 	{
 		mProperties.width = width;
+
+		// Adjusting window size to client area... again.
+		RECT winRectAdjust = { 0, 0, mProperties.width, mProperties.height };
+		AdjustWindowRect(&winRectAdjust, windowFlags, false);
+
+		int32_t windowWidth = winRectAdjust.right - winRectAdjust.left;
+
 		SetWindowPos(
-			GetNativeWindow(mNativeWindow),
+			GetPrivateNativeWindow(mNativeWindow),
 			nullptr,
 			0, 0,
-			width,
+			windowWidth,
 			GetHeight(),
 			SWP_NOMOVE | SWP_NOZORDER
 		);
@@ -279,12 +306,19 @@ namespace BLAF
 	void Window::SetHeight(uint32_t height)
 	{
 		mProperties.height = height;
+
+		// Adjusting window size to client area... and again.
+		RECT winRectAdjust = { 0, 0, mProperties.width, mProperties.height };
+		AdjustWindowRect(&winRectAdjust, windowFlags, false);
+
+		int32_t windowHeight = winRectAdjust.bottom - winRectAdjust.top;
+
 		SetWindowPos(
-			GetNativeWindow(mNativeWindow),
+			GetPrivateNativeWindow(mNativeWindow),
 			nullptr,
 			0, 0,
 			GetWidth(),
-			height,
+			windowHeight,
 			SWP_NOMOVE | SWP_NOZORDER
 		);
 	}
@@ -293,12 +327,20 @@ namespace BLAF
 	{
 		mProperties.width = width;
 		mProperties.height = height;
+
+		// Adjusting window size to client area... AND AGAIN!
+		RECT winRectAdjust = { 0, 0, mProperties.width, mProperties.height };
+		AdjustWindowRect(&winRectAdjust, windowFlags, false);
+
+		int32_t windowWidth = winRectAdjust.right - winRectAdjust.left;
+		int32_t windowHeight = winRectAdjust.bottom - winRectAdjust.top;
+
 		SetWindowPos(
-			GetNativeWindow(mNativeWindow),
+			GetPrivateNativeWindow(mNativeWindow),
 			nullptr,
 			0, 0,
-			width,
-			height,
+			windowWidth,
+			windowHeight,
 			SWP_NOMOVE | SWP_NOZORDER
 		);
 	}

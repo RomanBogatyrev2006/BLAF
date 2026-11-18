@@ -18,6 +18,7 @@ endif ()
 add_subdirectory(sources/blafCore)
 add_subdirectory(sources/blafPch)
 add_subdirectory(sources/blafDebug)
+add_subdirectory(sources/blafInput)
 add_subdirectory(sources/blafRender)
 
 add_library(BLAF INTERFACE)
@@ -28,6 +29,7 @@ endif()
 
 target_link_libraries(BLAF INTERFACE blafCore)
 target_link_libraries(BLAF INTERFACE blafDebug)
+target_link_libraries(BLAF INTERFACE blafInput)
 target_link_libraries(BLAF INTERFACE blafRender)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT blafCore)

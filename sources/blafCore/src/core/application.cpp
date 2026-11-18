@@ -32,9 +32,12 @@ namespace BLAF
 		#endif
 		logger->Log(LogLevel::Log, BLAF_InitializeString);
 		
+		// Create input manager
+		mInput = new Input();
 		// Initialize window manager
-		mWindowManager = new Window("BLAF", 1280, 720, 640, 360);
+		mWindowManager = new Window("BLAF", 1280, 720, 640, 360, mInput);
 		//renderer = new Renderer();
+		
 	}
 
 	Application::~Application()
@@ -44,6 +47,7 @@ namespace BLAF
 		// Deinitialize modules
 		//delete renderer;
 		delete mWindowManager;
+		delete mInput;
 		delete logger;
 	}
 
@@ -64,15 +68,20 @@ namespace BLAF
 		bRunning = true;
 		PostConstruct();
 		mTimer->Initialize();
+		mInput->Initialize(mWindowManager->GetNativeWindow());
 		//renderer->Initialize();
 		while (bRunning)
 		{
 			mTimer->Tick();
 			bRunning = mWindowManager->Update();
+			mInput->BeginFrame();
+			mInput->Update(mTimer->DeltaTime());
 			Update();
+			mInput->EndFrame();
 
 		}
 		mTimer->Deinitialize();
+		mInput->Deinitialize();
 	}
 }
 

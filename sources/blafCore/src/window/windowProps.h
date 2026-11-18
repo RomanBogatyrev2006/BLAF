@@ -25,10 +25,10 @@ struct WindowProperties
 	*/
 
 	/** @brief Position of window by X (Horizontal). */
-	uint32_t x;
+	int32_t x;
 
 	/** @brief Position of window by Y (Vertical). */
-	uint32_t y;
+	int32_t y;
 
 	/** @} */
 	
@@ -38,10 +38,10 @@ struct WindowProperties
 	*/
 
 	/** @brief Width of window (Horizontal size). */
-	uint32_t width;
+	int32_t width;
 
 	/** @brief Height of window (Vertical size). */
-	uint32_t height;
+	int32_t height;
 
 	/** @} */
 
